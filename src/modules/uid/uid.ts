@@ -1,3 +1,7 @@
-export const uid = ():string => {
-  return `${Math.random().toString(16).slice(2)}${Math.random().toString(16).slice(2).substring(0,6)}`
+export const uid = (): string => {
+  const array = new Uint8Array(10);
+  globalThis.crypto.getRandomValues(array);
+  return Array.from(array)
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
 }
