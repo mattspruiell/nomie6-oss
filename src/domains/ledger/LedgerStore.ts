@@ -462,32 +462,39 @@ const ledgerInit = () => {
       // Holder of Promises - kinda of like me as a dad - it's empty by default.
       let promises = []
 
-      // Loop over targe books
-      update((_state) => {
-        Object.keys(targets).forEach(async (date) => {
-          // Use date to get the book
-          let book = await methods.getBook(date)
+      // Loop over target books
+      for (const date of Object.keys(targets)) {
+        // Use date to get the book
+        let book = await methods.getBook(date)
 
-          // Get LogIds to delete for this book.
-          let logIds = targets[date]
+        // Get LogIds to delete for this book.
+        let logIds = targets[date]
 
-          // Create a new book - by filtering logs that don't match the id.
-          let newBook = book.filter((log) => {
-            return logIds.indexOf(log._id) == -1
-          })
-
-          // Update the store to use the new book
-          // TODO: this doesn't seem to be trigger a change in History.svetle
-          _state.books[date] = newBook
-
-          // Add to promise the saving of the book
-          promises.push(methods.putBook(date, newBook))
+        // Create a new book - by filtering logs that don't match the id.
+        let newBook = book.filter((log) => {
+          return logIds.indexOf(log._id) == -1
         })
 
-        return _state
-      })
+        // Add to promise the saving of the book
+        promises.push(methods.putBook(date, newBook).then((res) => {
+          return { date, newBook, result: res }
+        }))
+      }
+
       // Wait for all promises to be finished, then resolve
       let results = await Promise.all(promises)
+
+      // Update the store synchronously
+      update((_state) => {
+        results.forEach(({ date, newBook }) => {
+          _state.books[date] = newBook
+        })
+        _state.books = { ..._state.books } // trigger reactivity
+        return _state
+      })
+
+      // Strip out the extra data from results to keep the return value the same
+      results = results.map(r => r.result)
       methods.hooks.run('onLogsDeleted', results)
       return results
     },
