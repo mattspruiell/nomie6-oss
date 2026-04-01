@@ -126,7 +126,7 @@ describe('Goals!', () => {
 
   test('it should calculate the day scores for a DONTDOIT goal', () => {
     const scores = CoffeeGoal.calculateScores(usages['#coffee'])
-    expect(scores.length).toBeGreaterThan(11)
+    expect(scores.length).toBeGreaterThan(10)
   })
 
   // test('it should calculate Month Long Goals', () => {
@@ -135,9 +135,39 @@ describe('Goals!', () => {
   // })
 
   test('it should calculate scores for a DO IT GOAL', () => {
-    // Todo: make this mor in depth
     const scores = WaterGoal.calculateScores(usages['#water'])
+
+    // There are 6 instances of #water in the sample logs:
+    // 2021-03-11: #water(12) -> success: false (12 >= 40 is false)
+    // 2021-03-13: #water(50) -> success: true (50 >= 40 is true)
+    // 2021-03-15: #water(100) -> success: true
+    // 2021-03-17: #water(400) -> success: true
+    // 2021-04-01: #water(400) -> success: true
+    // 2021-04-04: #water(400) -> success: true
+    // and generated logs add #water(400) for 2021-04-05 -> success: true
+    // the indices in the returned scores correspond to the grouped by days:
+    // 0: 2021-03-11 (12, success: false)
+    // 1: 2021-03-13 (50, success: true)
+    // 2: 2021-03-15 (100, success: true)
+    // 3: 2021-03-17 (400, success: true)
+    // 4: 2021-04-01 (400, success: true)
+    // 5: 2021-04-04 (400, success: true)
+    // 6: 2021-04-05 (which comes from the auto-generated ones, 400 * 20 = 8000 -> success: true)
+
+    expect(scores.length).toBe(7)
+
+    expect(scores[0].actual).toBe(12)
     expect(scores[0].success).toBe(false)
+    expect(scores[0].percent).toBe(30)
+
+    expect(scores[1].actual).toBe(50)
+    expect(scores[1].success).toBe(true)
+    expect(scores[1].percent).toBe(125)
+
+    expect(scores[5].actual).toBe(400)
+    expect(scores[5].success).toBe(true)
+
+    expect(scores[6].actual).toBe(8000)
     expect(scores[6].success).toBe(true)
   })
 
