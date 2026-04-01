@@ -1,4 +1,4 @@
-import text, { initials, replaceTextAt } from './text'
+import text, { initials, replaceTextAt, textToId } from './text'
 import { it, describe, expect } from 'vitest'
 describe('text tests', () => {
   it('should truncate', () => {
@@ -35,3 +35,21 @@ describe("Replace text at position", ()=>{
     expect(final).toEqual('Today my #mood(40) ');
   })
 });
+
+describe('textToId tests', () => {
+  it('should handle simple strings', () => {
+    expect(textToId('Hello World')).toBe('id-helloWorld')
+  })
+
+  it('should handle strings with special characters', () => {
+    expect(textToId('My-Special_String!')).toBe('id-mySpecialString')
+  })
+
+  it('should handle numbers', () => {
+    expect(textToId('123 test')).toBe('id-123Test')
+  })
+
+  it('should handle empty strings', () => {
+    expect(textToId('')).toBe('id-')
+  })
+})
