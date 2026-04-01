@@ -228,32 +228,26 @@
   }
 
   function onKeyPress(e) {
-    var keyCode = e.code
-
-    if (e.keyCode === 9) {
+    if (e.keyCode === 9 || e.code === 'Tab') {
       // tab was pressed
+      e.preventDefault()
 
       // get caret position/selection
-      var val = this.value,
-        start = this.selectionStart,
-        end = this.selectionEnd
+      var target = e.target,
+        val = target.value,
+        start = target.selectionStart,
+        end = target.selectionEnd
 
       // set textarea value to: text before caret + tab + text after caret
-      this.value = (val || '').substring(0, start) + '\t' + (val || '').substring(end)
+      target.value = (val || '').substring(0, start) + '	' + (val || '').substring(end)
 
       // put caret at right position again
-      this.selectionStart = this.selectionEnd = (start || 0) + 1
-
-      // prevent the focus lose
-      return false
+      target.selectionStart = target.selectionEnd = (start || 0) + 1
     }
   }
 
-  async function editFile() {
+  function editFile() {
     state.edit = true
-    await tick(200)
-    editor = document.getElementById('file-editor')
-    editor.addEventListener('onkeydown', onKeyPress)
   }
 
   function getPath(file) {
@@ -369,7 +363,7 @@
         {#if !state.edit}
           <pre class="text-gray-800 dark:text-gray-200">{fileContent}</pre>
         {:else}
-          <textarea id="file-editor" class="min-h-screen" autocapitalize="off" autocorrect="off">{fileContent}</textarea
+          <textarea id="file-editor" bind:this={editor} on:keydown={onKeyPress} class="min-h-screen" autocapitalize="off" autocorrect="off">{fileContent}</textarea
           >
         {/if}
       {:else}
