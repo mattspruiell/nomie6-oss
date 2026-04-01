@@ -38,7 +38,6 @@
         })
       }
     }
-    // TODO: make this sticky
     tabChildren[activeIndex].active = true
     activeIndex = 0
   }
@@ -63,7 +62,7 @@
 </script>
 
 <Panel className="h-full  tab-panel-swiper" {id}>
-  <header slot="header">
+  <header slot="header" class="sticky top-0 z-40 bg-white dark:bg-black">
     <slot name="above-header" />
     <div class="py-2">
       <div class="stiff"><slot name="header-left" /></div>
