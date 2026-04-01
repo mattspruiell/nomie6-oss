@@ -1,4 +1,4 @@
-import text, { initials, replaceTextAt } from './text'
+import text, { initials, replaceTextAt, isEmail } from './text'
 import { it, describe, expect } from 'vitest'
 describe('text tests', () => {
   it('should truncate', () => {
@@ -20,6 +20,28 @@ describe('text tests', () => {
     expect(initials('poooolboy')).toBe('PO')
     expect(initials('p')).toBe('P')
     expect(initials('')).toBe('NA')
+  })
+
+  it('should validate emails correctly', () => {
+    // Valid emails
+    expect(isEmail('test@example.com')).toBe(true);
+    expect(isEmail('user.name+tag+sorting@example.com')).toBe(true);
+    expect(isEmail('test@[123.123.123.123]')).toBe(true);
+    expect(isEmail('a@b.cc')).toBe(true);
+
+    // Invalid emails
+    expect(isEmail('plainaddress')).toBe(false);
+    expect(isEmail('@example.com')).toBe(false);
+    expect(isEmail('email@example@example.com')).toBe(false);
+    expect(isEmail('.email@example.com')).toBe(false);
+    expect(isEmail('email.@example.com')).toBe(false);
+    expect(isEmail('email..email@example.com')).toBe(false);
+
+    // Edge cases
+    expect(isEmail('')).toBe(false);
+    expect(isEmail(undefined as any)).toBe(false);
+    expect(isEmail(null as any)).toBe(false);
+    expect(isEmail(' ')).toBe(false);
   })
   
 })
