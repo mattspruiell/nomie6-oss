@@ -16,7 +16,7 @@
   import { MoreVertical } from '../../../components/icon/nicons'
   import IonIcon from '../../../components/icon/ion-icon.svelte'
   import { timeFrames } from './widget-timeframe'
-  import { openDropMenu } from '../../../components/menu/useDropmenu'
+
   import { Interact } from '../../../store/interact'
   import { Lang } from '../../../store/lang'
   import { showToast } from '../../../components/toast/ToastStore'
@@ -42,7 +42,7 @@
   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 }
 
-  const showSizeMenu = (htmlTarget) => {
+  const showSizeMenu = () => {
     const buttons = [
       { id: 'sm', label: 'Small' },
       { id: 'md', label: 'Medium' },
@@ -57,7 +57,11 @@
         },
       }
     })
-    openDropMenu(htmlTarget, buttons)
+    Interact.popmenu({
+      id: `widget-size`,
+      title: 'Size',
+      buttons,
+    })
   }
 
   const showTimeframeMenu = (evt) => {
@@ -170,9 +174,8 @@
       {#if !hideTools}
         <button
           class="text-xs  px-1 "
-          on:click={(evt) => {
-            // TODO: Move this to the new drop menu - when it follows better
-            showSizeMenu(evt.target)
+          on:click={() => {
+            showSizeMenu()
           }}
         >
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
