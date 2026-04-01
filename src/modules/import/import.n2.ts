@@ -1,4 +1,4 @@
-import { dashCase } from './import'
+import snakeCase from '../../utils/snake-case/snake-case'
 import type { INormalizedImport, ITrackers } from './import'
 import TrackerClass from '../tracker/TrackerClass'
 import type { ITracker } from '../tracker/TrackerClass'
@@ -26,7 +26,7 @@ function getTrackers(fileData: any): ITrackers {
     // let emojis = EmojiSearch(ot.label.toLowerCase());
     // Set new tracker object
     let tracker: ITracker = {
-      tag: dashCase(ot.label),
+      tag: snakeCase(ot.label),
       label: ot.label,
       color: ot.color,
       emoji: getEmoji(ot.label),
@@ -46,7 +46,7 @@ function getTrackers(fileData: any): ITrackers {
 function getBoards(fileData: any): Array<IBoard> {
   let boards = {}
   ;(fileData.trackers || []).forEach((tracker) => {
-    let tag = dashCase(tracker.label)
+    let tag = snakeCase(tracker.label)
     if (tracker.groups) {
       tracker.groups.forEach((group) => {
         if ((group || '').trim().length) {
@@ -64,7 +64,7 @@ function getBoards(fileData: any): Array<IBoard> {
     })
     .map((groupName) => {
       return {
-        id: dashCase(groupName),
+        id: snakeCase(groupName),
         label: groupName,
         trackers: boards[groupName] || [],
       }
@@ -79,7 +79,7 @@ function getOldN1Trackers(fileData: any) {
     ;(fileData.trackers || []).forEach((tracker) => {
       // Set a new base tracker with right tag
       let baseTkr = {
-        ...{ tag: dashCase(tracker.label) },
+        ...{ tag: snakeCase(tracker.label) },
         ...tracker,
       }
       // Add to oldTracker
