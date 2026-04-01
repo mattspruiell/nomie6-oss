@@ -144,7 +144,7 @@
 
   let mounted = false
 
-  if (window.location.href.search(/\?bypass/gi) > -1) {
+  if (new URLSearchParams(window.location.search).has('bypass')) {
     $Prefs.storageType = 'local'
     window.location.href = '/'
   }
