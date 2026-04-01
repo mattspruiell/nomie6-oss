@@ -132,10 +132,7 @@
   const setDocParams = () => {
     setDocumentTheme($Prefs.theme)
   }
-  // TODO: Migrate these away from the method.function name - to just function name
-  window.addEventListener('load', async () => {
-    setDocParams()
-  })
+  window.addEventListener('load', setDocParams)
 
   // Used to make sure that boards and trackers are loaded
 
