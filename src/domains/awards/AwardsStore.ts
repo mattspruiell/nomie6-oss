@@ -165,11 +165,9 @@ export const saveNewAwards = async () => {
   })
   // Save them
   let saved = []
-  for (let i = 0; i < awardsToSave.length; i++) {
-    await chain.add(awardsToSave[i]).then(() => {
-      saved.push(awardsToSave[i])
-    })
-  }
+  await Promise.all(awardsToSave.map(award => chain.add(award).then(() => {
+    saved.push(award)
+  })))
   // Stop BLocking UI
   Interact.stopBlocker()
   await wait(200)
