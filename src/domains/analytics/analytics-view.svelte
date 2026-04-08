@@ -145,18 +145,19 @@
                 clearInterval(timeout);
                 
         tempdata = [];
-        var i;
-        
-        for (i in trackables) {
-            if (trackables[i].id != undefined){
-                let usage = await getUsage(trackables[i].id)
-                await addUsage2Data(usage,trackables[i].id)
+        await Promise.all(trackables.map(async (trackable) => {
+            if (trackable.id != undefined){
+                let usage = await getUsage(trackable.id)
+                await addUsage2Data(usage,trackable.id)
             }
-        }
+        }));
+
         if (workingPivotSearchTerm.enabled == true){
-            for (i in searches) {
-                await addSearch2Data(searches[i])
-            }}
+            await Promise.all(searches.map(async (search) => {
+                await addSearch2Data(search)
+            }));
+        }
+
 
         data = await bringItTogether(tempdata)
         options.data = data;
