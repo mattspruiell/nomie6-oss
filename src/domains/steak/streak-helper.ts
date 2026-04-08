@@ -52,20 +52,6 @@ const logsToCalendar = (logs: Array<NLog>): Array<CalendarLog> => {
   })
 }
 
-// const getLogs = async (
-//   trackable: Trackable,
-//   date: Dayjs,
-//   view: StreakViewTypes = 'month',
-//   weekStartsOn: PrefsWeekStartTypes = 'sunday'
-// ): Promise<Array<NLog>> => {
-//   let payload = getDateRange(date, view, weekStartsOn)
-
-//   return await LedgerStore.query({
-//     search: trackable.tag,
-//     start: payload.start,
-//     end: payload.end,
-//   })
-// }
 
 const getStreak = async (element: Token, date: Dayjs, logs: Array<NLog>) => {
   return {
@@ -78,7 +64,6 @@ export default {
   logsToCalendar,
   getPercentage,
   getStreak,
-  // getLogs,
 }
 
 export type StreakDataUnit = {

@@ -40,7 +40,6 @@
   async function main() {
     if (trackable) {
       mockTracker = trackable.type == 'tracker' ? trackable.tracker : new TrackerClass({ tag: `${trackable.id}-mock` })
-      // let logs = await StreakHelper.getLogs(trackable, selectedDate, view, $Prefs.weekStarts)
       let logs = []
       calendarLogs = StreakHelper.logsToCalendar(logs)
     }
