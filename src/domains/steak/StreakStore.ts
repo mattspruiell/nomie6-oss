@@ -65,28 +65,4 @@ export const trackOnThisDay = async (trackable: Trackable, date: Date, known: IT
   }
 }
 
-// export const trackOnThisDay2 = async (trackable: Trackable, date: Date, known: ITrackables) => {
-//   const newDate = dayjs(date).hour(dayjs().hour()).minute(dayjs().minute())
-//   if (trackable.tracker) {
-//     try {
-//       const trackerInput = await getTrackerInputAsString({
-//         tracker: trackable.tracker,
-//         trackables: known,
-//         expandNote: true,
-//         value: trackable.tracker.default,
-//         nextLabel: Lang.t('general.save', 'Save'),
-//       })
 
-//       if (trackerInput) {
-//         const log = new NLog({ end: newDate.toDate().getTime(), note: `${trackerInput.raw}` })
-//         await saveLog(log)
-//         showToast({ message: Lang.t('general.saved', 'Saved') })
-//       }
-//     } catch (e) {
-//       Interact.error(e)
-//     }
-//   } else if (trackable.person) {
-//     openPersonModal(trackable.person, { date: newDate.toDate() })
-//   }
-//   return false
-// }
