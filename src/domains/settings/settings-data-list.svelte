@@ -26,6 +26,7 @@
   import { showToast } from '../../components/toast/ToastStore'
 
   import BackupListItems from '../../components/backup-message/backup-list-items.svelte'
+  import NomieServer from '../storage/engines/nomie-server/nomie-server.svelte'
 
   // let fileInputF
   // let showImporter = false
@@ -81,6 +82,8 @@
         🗄
       {:else if $Prefs.storageType === 'firebase'}
         ☁️
+      {:else if $Prefs.storageType === 'nomie-server'}
+        ☁️
       {:else if $Prefs.storageType == 'pouchdb'}
         🛋
       {/if}
@@ -91,6 +94,10 @@
   {#if $Prefs.storageType === 'pouchdb'}
     <Divider left={32} />
     <PouchdbSettings />
+  {/if}
+  {#if $Prefs.storageType === "nomie-server"}
+    <Divider left={32} />
+    <NomieServer />
   {/if}
 </List>
 
