@@ -139,9 +139,10 @@
         let auth = ''
         if (mask && (username.length || password.length)) {
           auth = `${username}:${dotted(password)}@`
-        } else if (username.length || password.length) {
-          auth = `${username}:${password}@`
         }
+        // When not masking, we deliberately exclude auth from the URL string.
+        // PouchDB receives the credentials securely via the `auth` config option,
+        // preventing plaintext password leakage in network tools or logs.
         connection = `${connection}${auth}${urlDetails.url.host || ''}/${state.form.database || ''}`
         return connection
       } catch (e) {
