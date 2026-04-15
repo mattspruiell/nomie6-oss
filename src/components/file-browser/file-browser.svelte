@@ -98,7 +98,7 @@
           buttonLabel: 'Reload',
           timeout: 2500,
           buttonClick() {
-            window.location.href = window.location.href
+            window.location.reload()
           },
         })
       } catch (e) {
