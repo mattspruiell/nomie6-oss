@@ -26,7 +26,6 @@ const moodTrackable = new Trackable({
     type: 'value',
   }),
 })
-// TODO: write tests for mean math trackers
 
 function rowMaker(count: number): Array<NLog> {
   let rows = []
@@ -237,6 +236,116 @@ describe('modules/stats/stats', function () {
 
     expect(minmax.min.value).toEqual(6)
     expect(minmax.max.value).toEqual(6)
+  })
+})
+
+describe('Mean Math Trackers', () => {
+  const monthago = dayjs().subtract(30, 'day')
+  const today = dayjs().endOf('day')
+
+  const rows = [
+    new NomieLog({
+      note: `#mood(6)`,
+      end: dayjs().subtract(5, 'day').toDate().getTime(),
+    }),
+    new NomieLog({
+      note: `#mood(0)`,
+      end: dayjs().subtract(4, 'day').toDate().getTime(),
+    }),
+    new NomieLog({
+      note: `#mood(0)`,
+      end: dayjs().subtract(3, 'day').toDate().getTime(),
+    }),
+    new NomieLog({
+      note: `#mood(4)`,
+      end: dayjs().subtract(2, 'day').toDate().getTime(),
+    }),
+  ]
+
+  it('should calculate mean including zeros when ignore_zeros is false', () => {
+    const trackable = new Trackable({
+      type: 'tracker',
+      tracker: new TrackerClass({
+        tag: 'mood',
+        math: 'mean',
+        type: 'value',
+        ignore_zeros: false,
+      }),
+    })
+
+    const processor = new StatsProcessor({ math: 'mean' })
+    const results = processor.generate({
+      rows,
+      fromDate: monthago,
+      toDate: today,
+      math: 'mean',
+      trackable,
+    })
+
+    // values are 6, 0, 0, 4. sum = 10. length = 4. mean = 2.5
+    expect(results.sum).toEqual(10)
+    expect(results.avg).toEqual(2.5)
+  })
+
+  it('should calculate mean excluding zeros when ignore_zeros is true', () => {
+    const trackable = new Trackable({
+      type: 'tracker',
+      tracker: new TrackerClass({
+        tag: 'mood',
+        math: 'mean',
+        type: 'value',
+        ignore_zeros: true,
+      }),
+    })
+
+    const processor = new StatsProcessor({ math: 'mean' })
+    const results = processor.generate({
+      rows,
+      fromDate: monthago,
+      toDate: today,
+      math: 'mean',
+      trackable,
+    })
+
+    // values are 6, 4. sum = 10. length = 2. mean = 5
+    expect(results.sum).toEqual(10)
+    expect(results.avg).toEqual(5)
+  })
+
+  it('should handle only zeros correctly when ignore_zeros is true', () => {
+    const zeroRows = [
+      new NomieLog({
+        note: `#mood(0)`,
+        end: dayjs().subtract(2, 'day').toDate().getTime(),
+      }),
+      new NomieLog({
+        note: `#mood(0)`,
+        end: dayjs().subtract(1, 'day').toDate().getTime(),
+      }),
+    ]
+
+    const trackable = new Trackable({
+      type: 'tracker',
+      tracker: new TrackerClass({
+        tag: 'mood',
+        math: 'mean',
+        type: 'value',
+        ignore_zeros: true,
+      }),
+    })
+
+    const processor = new StatsProcessor({ math: 'mean' })
+    const results = processor.generate({
+      rows: zeroRows,
+      fromDate: monthago,
+      toDate: today,
+      math: 'mean',
+      trackable,
+    })
+
+    // when ignore zeros is true, average should be 0 because all filtered out, fallback is 0 usually
+    expect(results.sum).toEqual(0)
+    expect(results.avg).toEqual(0)
   })
 })
 
