@@ -1,6 +1,24 @@
-import math from './math'
+import math, { centsToDollars, centsToFormatedDollar } from './math'
 import findIndex from 'lodash/findIndex'
 import { it, describe, expect } from 'vitest'
+
+describe('utils/math/currency', () => {
+  it('centsToDollars', () => {
+    expect(centsToDollars(0)).toEqual(0)
+    expect(centsToDollars(100)).toEqual(1)
+    expect(centsToDollars(125)).toEqual(1.25)
+    expect(centsToDollars(-100)).toEqual(-1)
+  })
+
+  it('centsToFormatedDollar', () => {
+    expect(centsToFormatedDollar(0)).toEqual('$0.00')
+    expect(centsToFormatedDollar(100)).toEqual('$1.00')
+    expect(centsToFormatedDollar(125)).toEqual('$1.25')
+    expect(centsToFormatedDollar(-100)).toEqual('$-1.00')
+    expect(centsToFormatedDollar(9999)).toEqual('$99.99')
+  })
+})
+
 describe('utils/math/calc', () => {
   it('should add a calculator buffer', () => {
     expect(math.calculate([2, '+', 2])).toEqual(4)
