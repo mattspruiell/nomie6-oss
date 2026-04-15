@@ -1,5 +1,5 @@
 <script lang="ts">
-      
+
     import { onMount } from 'svelte'
     import List from '../../components/list/list.svelte'
     import Empty from '../../components/empty/empty.svelte'
@@ -29,7 +29,7 @@
     var txt = ""
     var domain = "www.afternomie.com";
 
-   
+
 
     //message variables
     var subject = ""
@@ -50,8 +50,8 @@
     var nomie = false
     var nomiedata = {url:"",db:"",user:"",pw:""}
     var nomiedata_valid = false;
-    
-    
+
+
     $: if (innerWidth && !lockwidth) {
     qrwidth = innerWidth*0.93;
     if (qrwidth > 500){qrwidth = 500}
@@ -60,7 +60,7 @@
     refreshqr = true;
     setTimeout(function() {
       refreshqr = false
-      
+
    }, 10)
 
   }
@@ -78,13 +78,13 @@
         primary_valid = checkemail(primaryemail);
         if (primary_valid) {primary_style = "background-color:rgba(0, 255, 0, 0.05)";}
         else {primary_style = "background-color:rgba(255, 0, 0, 0.05)";}
-        
+
       }
     $: if (secondaryemail) {
         secondary_valid = checkemail(secondaryemail);
         if (secondary_valid) {secondary_style = "background-color:rgba(0, 255, 0, 0.05)";}
         else {secondary_style = "background-color:rgba(255, 0, 0, 0.05)";}
-        
+
       }
 
     $: if (retrycreateqr == true || retrycreateqr == false){
@@ -103,7 +103,7 @@
         else {
           subject_valid = false
           subject_style = "background-color:rgba(255, 0, 0, 0.05)";}
-    
+
   }
 
   function messageChange(){
@@ -148,16 +148,16 @@
         if (waitingtime !== 90) {waitingtime = 90} },},
         {"title":"120 Days","checked":120==waitingtime,click() {
         if (waitingtime !== 120) {waitingtime = 120} },}];
-        
+
     const buttons:Array<PopMenuButton> = createlist;
-    
+
     openPopMenu({
       id:"days-list",
       buttons,
     })
   }
 
-    
+
     function GoToStep(step){
       view = step
     }
@@ -178,7 +178,7 @@
     async function encryptobject(){
     if (stored == false) {
     var uniqueid = key(15);
-    
+
     var data = {
       "subject":subject,
       "note":message,
@@ -190,7 +190,7 @@
       "uniqueid":uniqueid,
       "nomiedata":nomie
     }
-   
+
     enckey = key(15);
     var encryptednote = encryptObject(data, enckey)
     txt = domain+"/view/"+encryptednote;
@@ -205,7 +205,7 @@
     }
     else {
       view = "oops"}
-    
+
   }
    }
 
@@ -213,16 +213,14 @@
     var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
    var charLength = chars.length;
    var result = '';
-   var randomValues = new Uint32Array(length);
-   globalThis.crypto.getRandomValues(randomValues);
    for ( var i = 0; i < length; i++ ) {
-      result += chars.charAt(randomValues[i] % charLength);
+      result += chars.charAt(Math.floor(Math.random() * charLength));
    }
    return result;
    }
 
    const saveLog = async (uniqueid)=>{
-	
+
 	var lastrequest = new Date().getTime();
 	var lastvalidated = new Date().getTime();
   try {
@@ -245,7 +243,7 @@
     refreshqr = true;
     setTimeout(function() {
       refreshqr = false
-      
+
    }, 1)
 
   setTimeout(function() {
@@ -258,18 +256,18 @@
   window.print()
 }
    //tempend
-   
-    //window.print() 
+
+    //window.print()
 }, 100)
 
 setTimeout(function() {
-  lockwidth = false; 
+  lockwidth = false;
 }, 3000)
 
  }
 
 function startNew(){
-  
+
      retrycreateqr = false
      refreshqr = false
      lockwidth = false;
@@ -278,7 +276,7 @@ function startNew(){
      txt = ""
      domain = "www.afternomie.com";
 
-   
+
 
     //message iables
      subject = ""
@@ -319,9 +317,9 @@ function startNew(){
       nomiedata = {url:"",db:"",user:"",pw:""}
     }
 
-    
-  }) 
-   
+
+  })
+
 </script>
 
 <style>
@@ -343,20 +341,20 @@ function startNew(){
      <List transparent className="max-w-md mx-auto">
         <Empty icon={QRCode} title="AfterNomie">
             <div class="my-0 text-center text-sm font-normal leading-tight text-gray-800 dark:text-gray-50">
-              AfterNomie is an opensource tool for creating emergency notes that can be read by your trusted contacts only 
+              AfterNomie is an opensource tool for creating emergency notes that can be read by your trusted contacts only
               after your death or if you are seriously injured.
               </div>
               <div class="my-2 text-center text-xs font-normal leading-tight text-gray-800 dark:text-gray-50">
-                Directly after you created your note, it will be encrypted and converted into a QR code which you 
-                can give to a person you trust. When this person tries to access your message, AfterNomie will try 
-                to contact you via email as soon as possible; if you do not reply within the period of time you previously 
-                defined, your note will become visible to your trusted person. When you use AfterNomie in combination with 
+                Directly after you created your note, it will be encrypted and converted into a QR code which you
+                can give to a person you trust. When this person tries to access your message, AfterNomie will try
+                to contact you via email as soon as possible; if you do not reply within the period of time you previously
+                defined, your note will become visible to your trusted person. When you use AfterNomie in combination with
                 DailyNomie & Sync Service it will enable you to reveal your Nomie tracking history in conjunction with your note.
                 </div>
               <div class="my-0 text-center text-xs font-normal leading-tight text-gray-800 dark:text-gray-50">
                 More information can be found at <a class="text-blue-800" target="_blank" href="https://www.dailynomie.com/?s=afternomie">DailyNomie-AfterNomie</a>
                 </div>
-                <Button  className="mt-2" clear primary on:click={()=>GoToStep("step2")}>Create Message →</Button> 
+                <Button  className="mt-2" clear primary on:click={()=>GoToStep("step2")}>Create Message →</Button>
         </Empty>
       </List>
       {/if}
@@ -465,8 +463,8 @@ function startNew(){
           <Button  disabled={!subject_valid || !message_valid || !primary_valid} className="mt-2" clear primary on:click={()=>GoToStep("step3")}>Summary →</Button>
         </div>
       </ListItem>
-      
-      
+
+
       </List>
     {/if}
     {#if view =="step3"}
@@ -535,7 +533,7 @@ function startNew(){
                 <div class="row" style="width:350px">
                   <div class="column" style="display:flex;justify-content:left"><Button  className="mt-2" clear primary on:click={()=>GoToStep("step2")}>← Back</Button></div>
                   <div class="column" style="display:flex;justify-content:right"><Button  className="mt-2" clear primary on:click={()=>{retrycreateqr = false;CreateQR()}}>Submit →</Button></div>
-                </div> 
+                </div>
       </Empty>
     </List>
     {/if}
@@ -550,7 +548,7 @@ function startNew(){
               <div class="row" style="width:350px">
                 <div class="column" style="display:flex;justify-content:left"><Button  className="mt-2" clear primary on:click={()=>{retrycreateqr = false;GoToStep("step2")}}>← Back</Button></div>
                 <div class="column" style="display:flex;justify-content:right"><Button  className="mt-2" clear primary on:click={()=>{retrycreateqr = true;CreateQR()}}>Retry →</Button></div>
-              </div> 
+              </div>
         </Empty>
       </List>
       {/if}
@@ -572,7 +570,7 @@ function startNew(){
         <div class="my-0 text-center text-sm font-normal leading-tight text-gray-800 dark:text-gray-50">
           <div  style="text-align:center">
             {#if !refreshqr}
-            <QRCodeImage bind:text={txt} scale={8} displayType="canvas" bind:width={qrwidth}/> 
+            <QRCodeImage bind:text={txt} scale={8} displayType="canvas" bind:width={qrwidth}/>
             {/if}
           </div>
           </div>
@@ -583,14 +581,14 @@ function startNew(){
             </div>
             <Divider left={16} />
             <div class="my-1 text-center text-sm font-normal leading-tight text-gray-800 dark:text-gray-50 not-printable">
-              <p><b>Very important!</b> Add the email address dailynomie@gmail.com 
-                to your email provider's safe senders list to prevent any notification from us 
+              <p><b>Very important!</b> Add the email address dailynomie@gmail.com
+                to your email provider's safe senders list to prevent any notification from us
                 regarding the note you just created from mistakenly ending up in spam.</p>
               </div>
               <Divider left={16} />
               {#if nomiedata_valid}
               <div class="my-1 text-center text-sm font-normal leading-tight text-gray-800 dark:text-gray-50">
-                Be aware that this QR-code contains access to the owners Nomie data. 
+                Be aware that this QR-code contains access to the owners Nomie data.
                 Instructions can be found on <a class="text-blue-800" target="_blank" href="https://www.afternomie.com">AfterNomie</a>
                 </div>
               <Divider left={16} />
@@ -601,9 +599,8 @@ function startNew(){
                 <div class="row not-printable" style="width:350px">
                   <div class="column" style="display:flex;justify-content:left"><Button  className="mt-2" clear primary on:click={()=>{startNew()}}>New</Button></div>
                   <div class="column" style="display:flex;justify-content:right"><Button className="mt-2" clear primary on:click={()=>{printscreen()}}>Print →</Button></div>
-                </div> 
+                </div>
                 </Empty>
       </List>
       {/if}
-  
-  
+
