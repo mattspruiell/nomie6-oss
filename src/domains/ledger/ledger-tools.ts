@@ -385,9 +385,11 @@ export default class LedgerTools {
       // Create chunks of books - to look up in groups
       let chunks = array_utils.chunk(booksToGet, maxPerBatch)
 
-      // Loop over the chunks of books
-      for (var i = 0; i < chunks.length; i++) {
-        let books = await get_batch(chunks[i])
+      // Loop over the chunks of books concurrently
+      const chunkPromises = chunks.map((chunk) => get_batch(chunk))
+      const chunkResults = await Promise.all(chunkPromises)
+
+      chunkResults.forEach((books) => {
         books.forEach((book) => {
           book.forEach((row) => {
             row = row instanceof NLog ? row : new NLog(row)
@@ -401,7 +403,7 @@ export default class LedgerTools {
             }
           })
         })
-      }
+      })
       return rows
     }
 
