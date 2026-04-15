@@ -56,9 +56,9 @@ const InitOfflineQueueStore = () => {
       for (let i = 0; i < state.logs.length; i++) {
         // Assign log for use later
         const log: NLog = state.logs[i]
-        // Save it to ledger and wait 500ms
+        // Save it to ledger
         let saved = await LedgerStore._saveLog(log)
-        await tick(500)
+
         // If saved - push to log
         if (saved) {
           logs.push(log)
