@@ -80,21 +80,18 @@ export const changeStats2StoreTime = async (time: Stats2TimeSpanType) => {
   await loadStats2Store(dateRange.start, dateRange.end)
 }
 
+const timeSpanToAdditionMap: Record<Stats2TimeSpanType, [number, dayjs.ManipulateType]> = {
+  'd': [1, 'day'],
+  'w': [1, 'week'],
+  'm': [1, 'month'],
+  '3m': [3, 'month'],
+  '6m': [6, 'month'],
+  '1y': [1, 'year'],
+}
+
 const nextTimeSpan = (date: Date, timespan: Stats2TimeSpanType, add: number): Date => {
-  let start: Dayjs
-  if (timespan === 'd') {
-    start = dayjs(date).add(add, 'day')
-  } else if (timespan === 'w') {
-    start = dayjs(date).add(add, 'week')
-  } else if (timespan === 'm') {
-    start = dayjs(date).add(add, 'month')
-  } else if (timespan === '3m') {
-    start = dayjs(date).add(3 * add, 'month')
-  } else if (timespan === '6m') {
-    start = dayjs(date).add(6 * add, 'month')
-  } else if (timespan === '1y') {
-    start = dayjs(date).add(add, 'year')
-  }
+  const [multiplier, unit] = timeSpanToAdditionMap[timespan] || [1, 'month']
+  const start = dayjs(date).add(multiplier * add, unit)
   return start.toDate()
 }
 
@@ -160,23 +157,19 @@ export const initStatsStore = async (trackable: Trackable, options: OpenStatsOpt
 
 // TODO: Make this less if else and based on the Stats2TimeTypes
 
+const timeSpanToSubtractionMap: Record<Stats2TimeSpanType, [number, dayjs.ManipulateType]> = {
+  'd': [1, 'day'],
+  'w': [6, 'days'],
+  'm': [1, 'month'],
+  '3m': [3, 'month'],
+  '6m': [6, 'month'],
+  '1y': [1, 'year'],
+}
+
 export const getDateRange = (endDate: Date, timespan: Stats2TimeSpanType): { start: Dayjs; end: Dayjs } => {
   const end = dayjs(endDate)
-  let start: Dayjs
-  
-  if (timespan === 'd') {
-    start = end.subtract(1, 'day')
-  } else if (timespan === 'w') {
-    start = end.subtract(6, 'days')
-  } else if (timespan === 'm') {
-    start = end.subtract(1, 'month')
-  } else if (timespan === '3m') {
-    start = end.subtract(3, 'month')
-  } else if (timespan === '6m') {
-    start = end.subtract(6, 'month')
-  } else if (timespan === '1y') {
-    start = end.subtract(1, 'year')
-  }
+  const [amount, unit] = timeSpanToSubtractionMap[timespan] || [1, 'month']
+  const start = end.subtract(amount, unit)
   return { start, end }
 }
 
