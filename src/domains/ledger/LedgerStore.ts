@@ -25,6 +25,7 @@ import type { ITrackersSummary } from './ledger-tools'
 // Stores
 import { Interact } from '../../store/interact'
 import { Lang } from '../../store/lang'
+import { uid } from '../../modules/uid/uid'
 
 import { LedgerImporter } from './ledger-importer'
 // Ledger specific
@@ -49,7 +50,6 @@ import { showToast } from '../../components/toast/ToastStore'
 import textUtils from '../../utils/text/text'
 
 import { writable } from 'svelte/store'
-
 
 // Get the Geo Location module
 // Utils
@@ -401,7 +401,7 @@ const ledgerInit = () => {
                 })
                 await loadToday({ knownTrackables: MasterTrackables })
                 update((s) => {
-                  s.hash = `${Math.random()}`
+                  s.hash = `${uid()}`
                   return s
                 })
                 showToast({ message: 'Undo complete' })
@@ -476,9 +476,11 @@ const ledgerInit = () => {
         })
 
         // Add to promise the saving of the book
-        promises.push(methods.putBook(date, newBook).then((res) => {
-          return { date, newBook, result: res }
-        }))
+        promises.push(
+          methods.putBook(date, newBook).then((res) => {
+            return { date, newBook, result: res }
+          })
+        )
       }
 
       // Wait for all promises to be finished, then resolve
@@ -494,7 +496,7 @@ const ledgerInit = () => {
       })
 
       // Strip out the extra data from results to keep the return value the same
-      results = results.map(r => r.result)
+      results = results.map((r) => r.result)
       methods.hooks.run('onLogsDeleted', results)
       return results
     },
@@ -527,7 +529,6 @@ const ledgerInit = () => {
         return a.end < b.end ? 1 : -1
       })
     },
-
 
     async getDay(date) {
       return methods.query({
@@ -728,7 +729,6 @@ export const promptForUpgrade = async () => {
     'You need to have a valid subscription to write to the Nomie encrypted cloud',
     'Upgrade'
   )
-
 }
 
 /**
