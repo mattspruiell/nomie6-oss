@@ -45,7 +45,8 @@ export class GoalClass {
     this.trackable = starter.trackable ? new Trackable(starter.trackable) : undefined
     this.tag = starter.tag || this.trackable?.tag || undefined
 
-    this.duration = starter.duration || "day" // todo:// make this work for week
+    const validDurations = ['day', 'week', 'month', 'year']
+    this.duration = starter.duration && validDurations.includes(starter.duration) ? starter.duration : "day"
     this.target = parseNumber(starter.target)
     this.comparison = starter.comparison
     this.usedailyaverage = starter.usedailyaverage || false
