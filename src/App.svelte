@@ -132,7 +132,6 @@
   const setDocParams = () => {
     setDocumentTheme($Prefs.theme)
   }
-  // TODO: Migrate these away from the method.function name - to just function name
   window.addEventListener('load', async () => {
     setDocParams()
   })
