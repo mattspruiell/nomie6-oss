@@ -21,11 +21,7 @@
 
 // Todo make this more type complete
 
-import {
-  addDividerToFirst,
-  getDatePopButtons,
-  getLogPopButtons,
-} from '../modules/pop-buttons/pop-buttons'
+import { addDividerToFirst, getDatePopButtons, getLogPopButtons } from '../modules/pop-buttons/pop-buttons'
 // vendors
 import type { Dayjs } from 'dayjs'
 
@@ -48,7 +44,6 @@ import { openLogEditor } from '../domains/nomie-log/LogEditorStore'
 import { closeModal, openModal } from '../components/backdrop/BackdropStore2'
 import { openPopMenu } from '../components/pop-menu/usePopmenu'
 import { showToast } from '../components/toast/ToastStore'
-
 
 import { wait } from '../utils/tick/tick'
 // Svelte
@@ -270,7 +265,7 @@ const interactInit = () => {
         id: 'blocker',
         position: 'center',
         transparent: true,
-        component: blockerModalSvelte
+        component: blockerModalSvelte,
       })
       update((state) => {
         state.blocker.show = true
@@ -280,7 +275,7 @@ const interactInit = () => {
       })
     },
     stopBlocker() {
-      closeModal('blocker');
+      closeModal('blocker')
       update((state) => {
         state.blocker.show = false
         state.blocker.message = undefined
@@ -319,25 +314,7 @@ const interactInit = () => {
      * @param tracker
      * @param options
      */
-    async trackerInput(tracker, options: any = {}) {
-      // let value = options.value || null
-      // let allowSave = options.allowSave === false ? false : true
-      // return new Promise((resolve, reject) => {
-      //   return update((s) => {
-      //     s.trackerInput.show = true
-      //     s.trackerInput.tracker = tracker
-      //     s.trackerInput.allowSave = allowSave
-      //     s.trackerInput.value = value
-      //     s.trackerInput.onInteract = (payload, action: string = 'unknown') => {
-      //       if (action !== 'cancelled') {
-      //         payload.action = action
-      //         resolve(payload)
-      //       }
-      //     }
-      //     return s
-      //   })
-      // })
-    },
+    async trackerInput(tracker, options: any = {}) {},
     dismissTrackerInput() {
       update((d) => {
         d.trackerInput.show = false
@@ -383,7 +360,7 @@ const interactInit = () => {
             if (confirmed) {
               try {
                 await LedgerStore.deleteLogs([log])
-                showToast({ message: Lang.t('general.note-deleted','Note Deleted') })
+                showToast({ message: Lang.t('general.note-deleted', 'Note Deleted') })
               } catch (e) {
                 methods.error(e.message)
               }
