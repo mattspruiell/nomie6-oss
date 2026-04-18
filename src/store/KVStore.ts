@@ -59,9 +59,6 @@ export const createKVStore = (path: string, props: DocStorePropTypes) => {
    * @returns
    */
   const _write = async (state: KVStoreState): Promise<KVStoreState> => {
-    // Clone State
-    // const serverState = await _read();
-    // Try pulling from server for anything not on this device
     const _state = state;
 
     // Loop over keys and serialize if serializer
