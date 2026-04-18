@@ -213,8 +213,10 @@
     var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
    var charLength = chars.length;
    var result = '';
+   var randomValues = new Uint32Array(length);
+   globalThis.crypto.getRandomValues(randomValues);
    for ( var i = 0; i < length; i++ ) {
-      result += chars.charAt(Math.floor(Math.random() * charLength));
+      result += chars.charAt(randomValues[i] % charLength);
    }
    return result;
    }
