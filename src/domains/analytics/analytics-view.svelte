@@ -147,16 +147,18 @@
         tempdata = [];
         var i;
         
-        for (i in trackables) {
-            if (trackables[i].id != undefined){
-                let usage = await getUsage(trackables[i].id)
-                await addUsage2Data(usage,trackables[i].id)
-            }
-        }
+        const promises = trackables
+            .filter(trackable => trackable.id != undefined)
+            .map(async (trackable) => {
+                let usage = await getUsage(trackable.id);
+                await addUsage2Data(usage, trackable.id);
+            });
+        await Promise.all(promises);
+
         if (workingPivotSearchTerm.enabled == true){
-            for (i in searches) {
-                await addSearch2Data(searches[i])
-            }}
+            const searchPromises = searches.map(search => addSearch2Data(search));
+            await Promise.all(searchPromises);
+        }
 
         data = await bringItTogether(tempdata)
         options.data = data;
