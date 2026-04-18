@@ -145,18 +145,18 @@
                 clearInterval(timeout);
                 
         tempdata = [];
-        var i;
         
-        for (i in trackables) {
-            if (trackables[i].id != undefined){
-                let usage = await getUsage(trackables[i].id)
-                await addUsage2Data(usage,trackables[i].id)
-            }
-        }
+        await Promise.all(
+            trackables
+                .filter(t => t.id != undefined)
+                .map(async t => {
+                    let usage = await getUsage(t.id);
+                    await addUsage2Data(usage, t.id);
+                })
+        );
         if (workingPivotSearchTerm.enabled == true){
-            for (i in searches) {
-                await addSearch2Data(searches[i])
-            }}
+            await Promise.all(searches.map(s => addSearch2Data(s)));
+        }
 
         data = await bringItTogether(tempdata)
         options.data = data;
@@ -191,7 +191,6 @@
     }
 
     async function addUsage2Data(usage,trackable){
-        var i;
         var values = usage.values;
         for (i in values) {
             var shortdate = await determineShortDate(usage.dates[i])
@@ -244,7 +243,6 @@
 
         //loop through results and add to array
         var consolidated = []
-        var i;
         for (i in results) {
             results[i].shortdate = results[i].start.toISOString().slice(0,10);
             var countfortoday  = results.filter(result => result.start.toISOString().slice(0,10) === results[i].start.toISOString().slice(0,10));
