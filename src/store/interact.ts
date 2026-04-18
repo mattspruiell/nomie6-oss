@@ -396,24 +396,12 @@ const interactInit = () => {
           divider: true,
         }
 
-        let trackableButton: Array<PopMenuButton> = []
-        // const trackables = log.elements
-        //   .map((token) => {
-        //     return tokenToTrackable(token, MasterTrackables)
-        //   })
-        //   .filter((s) => s)
-
-        // if (trackables.length === 1) {
-        //   trackableButton = getTrackableDetailPopButton(trackables[0])
-        // }
-
         methods.popmenu({
           title: dayjs(log.end).fromNow(),
           description: log.note,
           id: `log-options-${log._id}`,
           buttons: [
             ...getLogPopButtons(log, false),
-            ...trackableButton,
             ...addDividerToFirst(getDatePopButtons(log.end)),
             ...[deleteButton],
           ],
