@@ -24,7 +24,9 @@ export const dateToDayPart = (date: Date): DayPartUnit => {
 
 export default {
   toId(date: Date) {
-    return [date.getTime().toString(16), Math.random().toString().substr(3, 8)].join('.')
+    const array = new Uint32Array(1)
+    globalThis.crypto.getRandomValues(array)
+    return [date.getTime().toString(16), array[0].toString(16).padStart(8, '0').slice(0, 8)].join('.')
   },
   fromId(idString: string): Date {
     try {
