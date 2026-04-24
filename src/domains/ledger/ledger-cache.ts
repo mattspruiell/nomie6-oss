@@ -52,11 +52,9 @@ export const getLogsFromCacheByDay = async (date: Date): Promise<Array<NLog>> =>
   const filteredKeys = keys.filter((key) => {
     return key.search(_date) > -1
   })
-  const logs = []
-  for (let i = 0; i < filteredKeys.length; i++) {
-    let key = filteredKeys[i]
-    const log = await store.getItem(key)
-    logs.push(log)
-  }
+
+  const logPromises = filteredKeys.map((key) => store.getItem(key))
+  const logs = await Promise.all(logPromises)
+
   return logs.map((log) => new NLog(log))
 }
