@@ -38,14 +38,14 @@ export const exportStorage = async (props?: exportPropsType) => {
   await wait(200)
   for (let i = 0; i < chunks.length; i++) {
     let chunk = chunks[i]
-    for (let c = 0; c < chunk.length; c++) {
-      let path = Storage.convertPath(chunk[c])
-      Interact.blocker(`${path}`, math.percentage(chunks.length - 1, i))
+    await Promise.all(chunk.map(async (fileName) => {
+      let path = Storage.convertPath ? Storage.convertPath(fileName) : fileName
       let content = await Storage.get(path)
       if (content) {
         storage[path] = content
       }
-    }
+    }))
+    Interact.blocker(`Exporting chunk ${i + 1} of ${chunks.length}`, math.percentage(chunks.length - 1, i))
   }
   const payload: N6StorageExport = {
     version: `${AppVersion}`,
@@ -140,12 +140,10 @@ export const importStorageArchive = async (archive: N6StorageExport, props: Impo
       /**
        * Loop Over Paths in this Chunk
        */
-      for (let c = 0; c < cfiles.length; c++) {
-        Interact.blocker(`${cfiles[c].path}`, math.percentage(files.length, done.length))
-
+      await Promise.all(cfiles.map(async (cfile) => {
         try {
-          let path = cfiles[c].path
-          let content = cfiles[c].content
+          let path = cfile.path
+          let content = cfile.content
 
           /**
            * If the Existing Exists, and it's not a string
@@ -163,9 +161,10 @@ export const importStorageArchive = async (archive: N6StorageExport, props: Impo
 
           done.push(path)
         } catch (e) {
-          errors.push({ path: cfiles[c].path, e })
+          errors.push({ path: cfile.path, e })
         }
-      }
+      }))
+      Interact.blocker(`Importing chunk ${i + 1} of ${chunkedFiles.length}`, math.percentage(chunkedFiles.length, i + 1))
     }
 
     Interact.stopBlocker()
