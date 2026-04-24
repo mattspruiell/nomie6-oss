@@ -140,32 +140,46 @@ export const importStorageArchive = async (archive: N6StorageExport, props: Impo
       /**
        * Loop Over Paths in this Chunk
        */
-      for (let c = 0; c < cfiles.length; c++) {
-        Interact.blocker(`${cfiles[c].path}`, math.percentage(files.length, done.length))
-
-        try {
-          let path = cfiles[c].path
-          let content = cfiles[c].content
-
-          /**
-           * If the Existing Exists, and it's not a string
-           * then we will merge the Two together using
-           * lodash merge
-           */
-          const existing = await Storage.get(path)
-          if (existing && typeof existing !== 'string') {
-            let merged = smartMerge(existing, content)
-            await Storage.put(path, merged)
-          } else {
-            // It's either a string, or the existing doesn't exist
-            await Storage.put(path, content)
+      // Phase 1: Fetch existing documents in parallel
+      const existingDocs = await Promise.all(
+        cfiles.map(async (cfile) => {
+          try {
+            return await Storage.get(cfile.path)
+          } catch (e) {
+            return null
           }
+        })
+      )
 
-          done.push(path)
-        } catch (e) {
-          errors.push({ path: cfiles[c].path, e })
-        }
-      }
+      // Phase 2: Process and put documents in parallel
+      await Promise.all(
+        cfiles.map(async (cfile, index) => {
+          Interact.blocker(`${cfile.path}`, math.percentage(files.length, done.length))
+
+          try {
+            let path = cfile.path
+            let content = cfile.content
+            const existing = existingDocs[index]
+
+            /**
+             * If the Existing Exists, and it's not a string
+             * then we will merge the Two together using
+             * lodash merge
+             */
+            if (existing && typeof existing !== 'string') {
+              let merged = smartMerge(existing, content)
+              await Storage.put(path, merged)
+            } else {
+              // It's either a string, or the existing doesn't exist
+              await Storage.put(path, content)
+            }
+
+            done.push(path)
+          } catch (e) {
+            errors.push({ path: cfile.path, e })
+          }
+        })
+      )
     }
 
     Interact.stopBlocker()
