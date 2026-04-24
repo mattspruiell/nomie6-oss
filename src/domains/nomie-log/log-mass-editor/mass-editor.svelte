@@ -146,13 +146,16 @@
       let bookPaths = Object.keys(map)
       // Set Searching Regex
       let searchReg = new RegExp(regex.escape(state.replace), 'g')
+
+      // Prep for errors
+      let errors = []
+
       //Step over each replacing within the books
       PromiseStep(bookPaths, (path) => {
         return new Promise((resolve) => {
           // Get book
           let index = bookPaths.indexOf(path) + 1
-          // Prep for errors. Todo: if errors then show them
-          let errors = []
+
           // Get the current book
           Storage.get(path).then((book) => {
             // Map new notes with the content replaced
@@ -174,15 +177,26 @@
                 errors.push(e.message)
                 resolve(false)
               })
+          }).catch((e) => {
+            errors.push(e.message)
+            resolve(false)
           })
         })
       }).then(() => {
         // Finish the Steps
         state.finishedReplacing = true
         // Notify the User
-        Interact.confirm(`Replace Complete`, `${state.replacedCount} notes have been updated`).then(() => {
-          dispatch('close')
-        })
+        if (errors.length > 0) {
+          Interact.error(errors.join(', ')).then(() => {
+            Interact.confirm(`Replace Completed with Errors`, `${state.replacedCount} notes have been updated.`).then(() => {
+              dispatch('close')
+            })
+          })
+        } else {
+          Interact.confirm(`Replace Complete`, `${state.replacedCount} notes have been updated`).then(() => {
+            dispatch('close')
+          })
+        }
       })
     },
     foundToMap() {
